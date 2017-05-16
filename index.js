@@ -7,28 +7,28 @@ Object.defineProperty(exports, "__esModule", {
 var React = require('react')
 var actioncable = require('actioncable')
 
-var ActionCableProvider = React.createClass({
-  getChildContext: function () {
+class ActionCableProvider extends React.Component {
+  getChildContext() {
     return {
       cable: this.cable
     }
-  },
+  }
 
-  componentWillMount: function () {
+  componentWillMount() {
     if (this.props.cable) {
       this.cable = this.props.cable
     } else {
       this.cable = actioncable.createConsumer(this.props.url)
     }
-  },
+  }
 
-  componentWillUnmount: function () {
+  componentWillUnmount() {
     if (!this.props.cable && this.cable) {
       this.cable.disconnect()
     }
-  },
+  }
 
-  componentWillReceiveProps: function (nextProps) {
+  componentWillReceiveProps(nextProps) {
     // Props not changed
     if (this.props.cable === nextProps.cable &&
         this.props.url === nextProps.url) {
@@ -40,12 +40,12 @@ var ActionCableProvider = React.createClass({
 
     // create or assign cable
     this.componentWillMount()
-  },
+  }
 
-  render: function () {
+  render() {
     return this.props.children
   }
-})
+}
 
 ActionCableProvider.displayName = 'ActionCableProvider'
 
@@ -59,8 +59,8 @@ ActionCableProvider.childContextTypes = {
   cable: React.PropTypes.object.isRequired
 }
 
-var ActionCable = React.createClass({
-  componentDidMount: function () {
+class ActionCable extends React.Component {
+  componentDidMount () {
     var self = this;
     var _props = this.props,
         onReceived = _props.onReceived,
@@ -89,35 +89,35 @@ var ActionCable = React.createClass({
         }
       }
     )
-  },
+  }
 
-  componentWillUnmount: function () {
+  componentWillUnmount() {
     if (this.cable) {
       this.context.cable.subscriptions.remove(this.cable)
       this.cable = null
     }
-  },
+  }
 
-  send: function (data) {
+  send(data) {
     if (!this.cable) {
       throw new Error('ActionCable component unloaded')
     }
 
     this.cable.send(data)
-  },
+  }
 
-  perform: function (action, data) {
+  perform(action, data) {
     if (!this.cable) {
       throw new Error('ActionCable component unloaded')
     }
 
     this.cable.perform(action, data)
-  },
+  }
 
-  render: function () {
+  render() {
     return null
   }
-})
+}
 
 ActionCable.displayName = 'ActionCable'
 
